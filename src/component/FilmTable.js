@@ -43,7 +43,7 @@ function FilmTable(props) {
             }
           </tbody>
         </Table>
-        {showForm ? <FilmForm film={editableFilm} addFilm={ (film)=>{props.addFilm(film); setShowForm(false);} } editFilm={(film)=>{props.editFilm(film);setShowForm(false);}} cancel={()=>setShowForm(false)} ></FilmForm>:
+        {showForm ? <FilmForm  key={editableFilm?editableFilm.title:'0'} film={editableFilm} addFilm={ (film)=>{props.addFilm(film); setShowForm(false);} } editFilm={(film)=>{props.editFilm(film);setShowForm(false);}} cancel={()=>setShowForm(false)} ></FilmForm>:
           <Button variant='success'onClick={()=>{setShowForm(true)}} >Add</Button>
         }
       </>

@@ -9,11 +9,26 @@ function FilmForm(props){
     const [fav,setFav] = useState(props.film? props.film.favorite:false);
    
     // const [date,setDate] = useState(dayjs());
-    const [date,setDate] = useState(props.film.date? props.film.date.format('YYYY-MM-DD'):undefined);
-    const [rating,setRating] = useState(props.film.rating? props.film.rating:0);
+    const [date,setDate] = useState(()=>{
+        if(props.film !==undefined){
+            if(props.film.date!==undefined){
+                return props.film.date.format('YYYY-MM-DD')
+            }
+        }
+        // props.film.date!==undefined? props.film.date.format('YYYY-MM-DD'):undefined
+    });
+    const [rating,setRating] = useState(()=>{
+        if(props.film !==undefined){
+            if(props.film.rating!==undefined){
+                return props.film.rating
+            }
+        }
+        else return 0;
+        // props.film.rating!==undefined? props.film.rating:0
+    });
     const [stars,setStars] = useState(()=>{
         let stararr= [];
-        if(props.film.rating ===undefined){
+        if(props.film===undefined || props.film.rating ===undefined){
             for(let i=0;i<5;++i){
                 stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
             }
