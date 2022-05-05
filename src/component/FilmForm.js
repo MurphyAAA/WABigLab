@@ -2,25 +2,30 @@ import {Button, Form,Row,Col, FloatingLabel} from 'react-bootstrap';
 import { useState } from 'react';
 import dayjs from 'dayjs';
 import { BsStarFill,BsStar } from "react-icons/bs";
+import { useLocation, useNavigate ,Link} from 'react-router-dom';
+import {name_filter} from './FilmTable'
 
 function FilmForm(props){
-    
-    const [title,setTitle] = useState(props.film? props.film.title:'');
-    const [fav,setFav] = useState(props.film? props.film.favorite:false);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const [titleExist,setTitleExist] = useState(false);
+
+    const [title,setTitle] = useState(location.state.film? location.state.film.title:'');
+    const [fav,setFav] = useState(location.state.film? location.state.film.favorite:false);
    
     // const [date,setDate] = useState(dayjs());
     const [date,setDate] = useState(()=>{
-        if(props.film !==undefined){
-            if(props.film.date!==undefined){
-                return props.film.date.format('YYYY-MM-DD')
+        if(location.state.film !==undefined){
+            if(location.state.filmDate!==undefined){
+                return dayjs(location.state.filmDate).format('YYYY-MM-DD')
             }
         }
         // props.film.date!==undefined? props.film.date.format('YYYY-MM-DD'):undefined
     });
     const [rating,setRating] = useState(()=>{
-        if(props.film !==undefined){
-            if(props.film.rating!==undefined){
-                return props.film.rating
+        if(location.state.film !==undefined){
+            if(location.state.film.rating!==undefined){
+                return location.state.film.rating
             }
         }
         else return 0;
@@ -28,21 +33,23 @@ function FilmForm(props){
     });
     const [stars,setStars] = useState(()=>{
         let stararr= [];
-        if(props.film===undefined || props.film.rating ===undefined){
-            for(let i=0;i<5;++i){
-                stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
+        // if(location.state !==null){
+            if( location.state.film===undefined || location.state.film.rating ===undefined){
+                for(let i=0;i<5;++i){
+                    stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
+                }
+            }else{
+                for(let i=0;i<location.state.film.rating;++i){
+                    stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
+                }
+                for(let i=location.state.film.rating;i<5;++i){
+                    stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
+                }
             }
-        }else{
-            for(let i=0;i<props.film.rating;++i){
-                stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
-            }
-            for(let i=props.film.rating;i<5;++i){
-                stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
-            }
-        }
-    
+        // }
         return stararr;
     });
+    const isEditing = location.state.film ? true:false;
     const clickHandler=(id)=>{
         setRating(id+1);
         setStars((stars)=>{
@@ -55,17 +62,7 @@ function FilmForm(props){
             })
             // return stararr;
         })
-        // stararr = stararr.map((s,idx)=>  (idx<=id)?
-        //     <Button key={idx+'f'} id={idx} onClick={()=>{clickHandler(idx)}}><BsStarFill/></Button>:
-        //     <Button key={idx+'b'} id={idx} onClick={()=>{clickHandler(idx)}}><BsStar/></Button> 
-        
-        // );
-
-        // for(let i of stararr){
-        //     console.log(i.props.children.type);
-        // }
-        
-        
+      
     }
     const handleSubmit=(event)=>{
         event.preventDefault();
@@ -76,11 +73,12 @@ function FilmForm(props){
             film = {title:title,favorite:fav,date:dayjs(date),rating:rating};
         }
         
-        if(props.film === undefined)
-            props.addFilm(film);
-        else{
+        if(isEditing)
             props.editFilm(film);
-        }
+        else   
+            props.addFilm(film);
+
+        navigate('/'+name_filter[props.filterStatus-1]);
     }
 
     
@@ -90,7 +88,13 @@ function FilmForm(props){
                 <Form.Group as={Col} >
                     {/* 要加个验证！不能添加重复的title，并且edit的时候不能修改这个位置！ */}
                     <FloatingLabel  label="Film Title">
-                    <Form.Control type="text" required={true} value={title} placeholder="Film Title" onChange={event => setTitle(event.target.value)}/>
+                    <Form.Control type="text" required={true} value={title} placeholder="Film Title" disabled={isEditing}//编辑状态不能修改title
+                    onChange={event => {
+                        setTitle(event.target.value); 
+                        // if(!isEditing) //如果是编辑状态则不检查title是否重复
+                            props.films.some(f=>f.title === event.target.value)?setTitleExist(true):setTitleExist(false);
+                        } }/>
+                        {titleExist?'title exist!':''}
                     </FloatingLabel>
                 </Form.Group>
                 <Form.Group as={Col}>
@@ -102,10 +106,6 @@ function FilmForm(props){
 
                 <Form.Group as={Col}>
                     <Form.Label >Rating</Form.Label>
-                    {/* <Form.Control type="number" min={0} max={5} value={rating} onChange={event => setRating(event.target.value)}/> */}
-                    {/* <Form.Control  min={0} max={5} value={createStars()} onChange={event => setRating(event.target.value)}/> */}
-                    {/* <BsStar></BsStar>????????????????????????????????????????????????????? */}
-                    {/* <ShowStars film={props.film} setRating={setRating}/> */}
                     {stars}
                 </Form.Group>
                 <Form.Group className='mb-3' as={Col}>
@@ -115,8 +115,10 @@ function FilmForm(props){
                 </Form.Group>
             </Row>
             <Form.Group className='mb-3'>
-                <Button variant='primary' type='submit' >Save</Button> &nbsp;
-                <Button variant='danger' onClick={props.cancel}>cancel</Button>
+                <Button variant='primary' type='submit' disabled={titleExist}>Save</Button> &nbsp;
+                <Link to={'/'+name_filter[props.filterStatus-1]}>
+                <Button variant='danger' >cancel</Button>
+                </Link>
             </Form.Group>
         </Form>
     )

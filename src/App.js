@@ -1,12 +1,10 @@
-import {FilmLists} from './component/FilmTable'
-import {MyNavBar,TopNavbar} from './component/NavBar'
 import 'bootstrap/dist/css/bootstrap.min.css'
 import './App.css';
-import {Container,Col, Row} from 'react-bootstrap';
-import dayjs from 'dayjs' ; 
+import dayjs from 'dayjs' ; // 后面的字符串dayjs是library 
 import { useState } from 'react';
 import { id_filter } from './component/NavBar';
-// 后面的字符串dayjs是library 
+import {BrowserRouter, Routes,Route} from 'react-router-dom'
+import { FilmRoute ,DefaultRoute,Layout,FormRoute,EditRoute} from './component/FilmView';
 const fakeFilms=[
   // {title:'Pulp Fiction',favorite:true,date:dayjs('2022-03-10'),rating:5},
   {title:'Pulp Fiction',favorite:true,date:dayjs('2022-03-10'),rating:5},
@@ -22,7 +20,7 @@ const fakeFilms=[
 
 function App() {
   const [films,setFilms] = useState(fakeFilms);
-  const [filterStatus,setFilterStatus] = useState(id_filter.All);
+  // const [filterStatus,setFilterStatus] = useState(id_filter.All);
 
   const deleteFilm = (filmTitle)=>{
     setFilms((fms)=>fms.filter(fm=>fm.title !== filmTitle));
@@ -30,7 +28,7 @@ function App() {
   const addFilm = (film)=>{
     setFilms(oldFilms=>[...oldFilms,film]);
   }
-  const updateFilm=(film)=>{
+  const updateFilm=(film)=>{//修改
     
     setFilms(oldFilms=>{
       return oldFilms.map(fm=>{
@@ -57,17 +55,18 @@ function App() {
 
   }
   
-  const filterFunc =(myfilter)=>{
-    //console.log(myfilter);
-    if(filterStatus !== myfilter)
-        setFilterStatus(myfilter);
-  };
+  // const filterFunc =(myfilter)=>{
+  //   //console.log(myfilter);
+  //   if(filterStatus !== myfilter)
+  //       setFilterStatus(myfilter);
+  // };
 
-//????????? 为什么被调用了两次？？？？  react的问题
-  const filterFilms=()=>{ 
+//为什么被调用了两次？？？？  react的问题
+  const filterFilms=(filter)=>{ 
+    // setFilterStatus(filter);
     let myfilms = [];
     // alert(1);
-    switch (filterStatus) {
+    switch (filter) {
       case id_filter.All:
         //执行filter的动作
         myfilms = films.filter(x=>{
@@ -110,23 +109,24 @@ function App() {
   }
 
   return (
-    <Container className="App">
-      <Row>
-        <Col>
-        {/* <h1>My Films</h1> */}        
-          <TopNavbar></TopNavbar>
-        </Col>
-      </Row>
-      <Row>
-         
-        {/* <MyNavBar showAllFilm = {showAll} showFavFilm = {showFav} showBRFilm = {showBR}
-        showLSFilm = {showLS} showSLMFilm = {showSLM} ></MyNavBar> */}
-        <MyNavBar filterFunction ={filterFunc} ></MyNavBar>
-        {/* <FilmLists films={films}></FilmLists> */}
-        <FilmLists films={filterFilms()} deleteFilm={deleteFilm} addFilm={addFilm} editFilm={updateFilm} changeFav ={changeFav} filterStatus ={filterStatus}></FilmLists>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<Layout ></Layout>}>
+          <Route index element={<FilmRoute films={filterFilms(id_filter.All)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.All}></FilmRoute>} ></Route>
+          <Route path='all' element={<FilmRoute films={filterFilms(id_filter.All)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.All} ></FilmRoute>} ></Route>
+          <Route path='Favorites' element={<FilmRoute films={filterFilms(id_filter.Favorites)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.Favorites} ></FilmRoute>}></Route>
+          <Route path='BestRated' element={<FilmRoute films={filterFilms(id_filter.BestRate)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.BestRate} ></FilmRoute>}></Route>
+          <Route path='SeenLastMonth' element={<FilmRoute films={filterFilms(id_filter.SeenLastMonth)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.SeenLastMonth} ></FilmRoute>}></Route>
+          <Route path='Unseen' element={<FilmRoute films={filterFilms(id_filter.Unseen)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.Unseen} ></FilmRoute>}></Route>
+        </Route>
+        <Route path='/add' element={ <FormRoute films={films} addFilm={addFilm} /> }></Route>
+        <Route path='/edit' element={<EditRoute films={films} editFilm={updateFilm} addFilm={addFilm}/>} ></Route>
         
-      </Row>
-    </Container>
+        <Route path='*' element={<DefaultRoute></DefaultRoute>} />
+      </Routes>
+      
+    </BrowserRouter>
+    
   );
 }
 

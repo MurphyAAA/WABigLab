@@ -1,26 +1,25 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
 import {React,useState} from 'react';
-import { FilmForm } from './FilmForm';
+import dayjs from 'dayjs';
 import {  Col, Table,Button } from "react-bootstrap";
 import { BsStarFill,BsStar,BsPencilSquare,BsTrash } from "react-icons/bs";
 import './Film.css';
+import { Link } from 'react-router-dom';
 const name_filter=["All",
     "Favorites",
-    "BestRate",
+    "BestRated",
     'SeenLastMonth',
     'Unseen']
 function FilmLists(props){
     return(
         <Col sm={8} >
           <h1 className='txt-left'>Filter:{name_filter[props.filterStatus-1]}</h1>
-          <FilmTable films={props.films} changeFav={props.changeFav} deleteFilm={props.deleteFilm} editFilm={props.editFilm} addFilm={props.addFilm} ></FilmTable>
+          <FilmTable films={props.films} changeFav={props.changeFav} deleteFilm={props.deleteFilm} editFilm={props.editFilm} filterStatus={props.filterStatus} ></FilmTable>
         </Col>
     );
 }
 
 function FilmTable(props) {
-  const [showForm,setShowForm] = useState(false);
-  const [editableFilm,setEditableFilm] = useState();
     return(
       <>
         <Table striped>
@@ -34,29 +33,27 @@ function FilmTable(props) {
             </tr>
           </thead>
           <tbody>
-              {/* films = {xxxx} 前面的films是属性下一个调用的props科通过 '.films'获得，props.films返回的是{xxx}的值 */}
-            
-            {
-              
-              props.films.map((f) => <FilmRow film={f} key={f.title} changeFav ={props.changeFav} deleteFilm={props.deleteFilm} setShowForm={setShowForm} setEditableFilm={setEditableFilm} editableFilm={editableFilm}/>)
+              {/* films = {xxxx} 前面的films是属性下一个调用的props科通过 '.films'获得，props.films返回的是{xxx}的值 */}            
+            {              
+              props.films.map((f) => 
+              <FilmRow film={f} key={f.title} changeFav ={props.changeFav} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />)
+              // <FilmRow film={f} key={f.title} changeFav ={props.changeFav} deleteFilm={props.deleteFilm} setShowForm={setShowForm} setEditableFilm={setEditableFilm} editableFilm={editableFilm}/>)
               //在这里filter！
             }
           </tbody>
         </Table>
-        {showForm ? <FilmForm  key={editableFilm?editableFilm.title:'0'} film={editableFilm} addFilm={ (film)=>{props.addFilm(film); setShowForm(false);} } editFilm={(film)=>{props.editFilm(film);setShowForm(false);}} cancel={()=>setShowForm(false)} ></FilmForm>:
-          <Button variant='success'onClick={()=>{setShowForm(true)}} >Add</Button>
-        }
+        <Link to='/add' state={ {filterStatus:props.filterStatus} }>
+          <Button variant='success'>Add Film</Button>
+        </Link>
       </>
     );
   }
   
 function FilmRow(props){
     return(
-        // <tr><FilmData film={props.film} /><FilmAction /></tr>
-        
         <tr>
-          <FilmActions film={props.film} deleteFilm={props.deleteFilm} setShowForm={props.setShowForm} setEditableFilm={props.setEditableFilm}  />
-          <FilmData key={props.editableFilm?props.editableFilm.title+props.editableFilm.favorite:'0'} film={props.film} changeFav={props.changeFav} />
+          <FilmActions film={props.film} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />
+          <FilmData key={props.film.title} film={props.film} changeFav={props.changeFav} />
           {/* key不同则会重新生成这个component，否则state不会更新 */}
         </tr>
     );
@@ -112,7 +109,11 @@ function FilmData(props){
 function FilmActions(props){
   // style={{fontSize: 15}}
   return <td>
-    <Button variant='primary' onClick={()=>{props.setShowForm(true);props.setEditableFilm(props.film)}}> <BsPencilSquare /></Button> &nbsp;
+    {/* edit  使用state传参必须在传之前用.format设定好日期的格式，否则传过去无法设定格式*/}
+    <Link to='/edit' state={{film:props.film, filmDate:props.film.date?dayjs(props.film.date).format('YYYY-MM-DD'):undefined, filterStatus:props.filterStatus}} >
+      <Button variant='primary'> <BsPencilSquare /></Button>
+    </Link>
+    &nbsp;
     <Button variant='danger' onClick={()=>{props.deleteFilm(props.film.title)}}> <BsTrash/> </Button>
   </td>
         
@@ -128,4 +129,4 @@ function Checkbox({filmtitle,label,value,onChange}){
 
 
 // export写文件最后  只有FilmLists才需要再文件外使用 
- export {FilmLists};
+ export {FilmLists,name_filter};
