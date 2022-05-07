@@ -80,7 +80,17 @@ function FilmForm(props){
 
         navigate('/'+name_filter[props.filterStatus-1]);
     }
-
+    const clearRating = ()=>{
+        // alert(123);
+        setRating(0);
+        setStars((stars)=>{
+            // let stararr= [];
+            return stars.map((s,idx)=>{
+                return <Button key={idx+'b'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStar/></Button> 
+            })
+            // return stararr;
+        })
+    }
     
     return(
         <Form onSubmit={handleSubmit}>
@@ -107,6 +117,7 @@ function FilmForm(props){
                 <Form.Group as={Col}>
                     <Form.Label >Rating</Form.Label>
                     {stars}
+                    <Button onClick={()=>clearRating()}>Clear</Button>
                 </Form.Group>
                 <Form.Group className='mb-3' as={Col}>
                     <Col sm={3}>
