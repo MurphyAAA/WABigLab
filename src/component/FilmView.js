@@ -32,10 +32,10 @@ function FilmRoute(props){
     
     // props.filterFunc(props.filterStatus)
     return(
-        <FilmLists films={props.films} deleteFilm={props.deleteFilm}  editFilm={props.editFilm} changeFav ={props.changeFav} changeRating={props.changeRating} filterStatus ={props.filterStatus}></FilmLists>
+        <FilmLists films={props.films} deleteFilm={props.deleteFilm}  editFilm={props.editFilm} changeFav ={props.changeFav} changeRating={props.changeRating} setFilms={props.setFilms} filterStatus ={props.filterStatus}></FilmLists>
     )
 }
-function Layout(props){
+function Topbar(props){
     return(
         <Container className="App">
             <Row>
@@ -43,6 +43,18 @@ function Layout(props){
                    <TopNavbar />
                 </Col>
             </Row>
+            <Row>
+                {/* <MyNavBar filterFunction ={props.filterFunc} ></MyNavBar> */}
+                {/* <FilmLists films={films}></FilmLists> */}
+                <Outlet />
+            </Row>
+            
+        </Container>
+    )
+}
+function Filterbar(props){
+    return(
+        <Container className="App">
             <Row>
                 {/* <MyNavBar filterFunction ={props.filterFunc} ></MyNavBar> */}
                 <MyNavBar  ></MyNavBar>
@@ -92,4 +104,4 @@ return(
 }
 
 
-export{FilmRoute,DefaultRoute,Layout,FormRoute,EditRoute}
+export{FilmRoute,DefaultRoute,Topbar,Filterbar,FormRoute,EditRoute}

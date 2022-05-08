@@ -14,7 +14,7 @@ function FilmLists(props){
     return(
         <Col sm={8} >
           <h1 className='txt-left'>Filter:{name_filter[props.filterStatus-1]}</h1>
-          <FilmTable films={props.films} changeFav={props.changeFav} changeRating={props.changeRating} deleteFilm={props.deleteFilm} editFilm={props.editFilm} filterStatus={props.filterStatus} ></FilmTable>
+          <FilmTable films={props.films} changeFav={props.changeFav} changeRating={props.changeRating} setFilms={props.setFilms} deleteFilm={props.deleteFilm} editFilm={props.editFilm} filterStatus={props.filterStatus} ></FilmTable>
         </Col>
     );
 }
@@ -36,7 +36,7 @@ function FilmTable(props) {
               {/* films = {xxxx} 前面的films是属性下一个调用的props科通过 '.films'获得，props.films返回的是{xxx}的值 */}            
             {              
               props.films.map((f) => 
-              <FilmRow film={f} key={f.title} changeFav ={props.changeFav} changeRating={props.changeRating} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />)
+              <FilmRow film={f} key={f.title} changeFav ={props.changeFav} changeRating={props.changeRating} setFilms={props.setFilms} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />)
               // <FilmRow film={f} key={f.title} changeFav ={props.changeFav} deleteFilm={props.deleteFilm} setShowForm={setShowForm} setEditableFilm={setEditableFilm} editableFilm={editableFilm}/>)
               //在这里filter！
             }
@@ -50,57 +50,25 @@ function FilmTable(props) {
   }
   
 function FilmRow(props){
+  
     return(
         <tr>
           <FilmActions film={props.film} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />
-          <FilmData key={props.film.title} film={props.film} changeFav={props.changeFav} changeRating={props.changeRating} />
+          <FilmData key={props.film.title} film={props.film} changeFav={props.changeFav} changeRating={props.changeRating} setFilms={props.setFilms} />
           {/* key不同则会重新生成这个component，否则state不会更新 */}
         </tr>
     );
 }
 function FilmData(props){
   // 声明一个叫 "mychecked" 的 state 变量
-  
+  // console.log("1",props.film)
+  const [rating,setRating] = useState(props.film.rating?props.film.rating:0)
   const [mychecked,setChecked] = useState(props.film.favorite);//只会初始化1次，第二次不会重新初始化了，所以会导致mychecked值和props.film.favorite不同
   // console.log('2',props.film.favorite) //为啥这一行和下一行值不一样？？？？？？？？？？？？？？
   // console.log('3',mychecked);
 
-  const [stars,setStars] = useState(()=>{
-    let stararr= [];
-    // if(location.state !==null){
-        if( props.film===undefined || props.film.rating ===undefined){
-            for(let i=0;i<5;++i){
-                stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
-            }
-        }else{
-            for(let i=0;i<props.film.rating;++i){
-                stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
-            }
-            for(let i=props.film.rating;i<5;++i){
-                stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
-            }
-        }
-    // }
-    return stararr;
-  });
-  const clickHandler=(id)=>{
-    // setRating(id+1);
-    const newRating = id+1
-    // console.log("clickHandler:",props.film.title,newRating)
-    props.changeRating(props.film.title,newRating);
-    setStars((stars)=>{
-        // let stararr= [];
-        return stars.map((s,idx)=>{
-            if(idx<=id)
-                return <Button key={idx+'f'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStarFill/></Button>
-            else
-                return <Button key={idx+'b'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStar/></Button> 
-        })
-      
-        // return stararr;
-    })
-
-  }
+  
+  
   // const stars= [];
   // for(let i=0;i<props.film.rating;++i){
   //   stars.push(<BsStarFill key={i+'f'}/>);
@@ -116,6 +84,10 @@ function FilmData(props){
   const handleChange=(title)=>{
     setChecked(!mychecked);
     props.changeFav(title)
+  }
+  const mychangeRating = (title,rating)=>{
+    setRating(rating)
+    props.changeRating(title,rating)
   }
   return(
     <>
@@ -138,7 +110,8 @@ function FilmData(props){
       <td>{props.film.date !==undefined && 
       props.film.date.format('YYYY-MM-DD')}</td>
       
-      <td>{stars}</td>
+      {/* <td>{stars}</td> */}
+      <td><ShowStars film={props.film} rating = {rating} changeRating={mychangeRating} setFilms={props.setFilms}></ShowStars></td>
     </>
   );
 }
@@ -161,6 +134,58 @@ function Checkbox({filmtitle,label,value,onChange}){
       {label}
     </label>
   );
+}
+function ShowStars(props){
+  
+  const [stars,setStars] = useState(()=>{
+    let stararr= [];
+    // if(location.state !==null){
+        if(props.film.rating ===undefined){
+            for(let i=0;i<5;++i){
+                stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
+            }
+        }else{
+            for(let i=0;i<props.film.rating;++i){
+                stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
+            }
+            for(let i=props.film.rating;i<5;++i){
+                stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
+            }
+        }
+    // }
+    return stararr;
+  });
+  const clickHandler=(id)=>{
+    // console.log(1);
+    // setRating(id+1);
+    // let newRating = id+1
+    // console.log("clickHandler:",props.film.title,newRating)
+    props.setFilms(oldfilms=>{
+      let films = [...oldfilms]
+      films.forEach(element => {
+      if(element.title === props.film.title)
+          element.rating = (id+1)
+      });
+      return films
+    })
+    // props.changeRating(props.film.title,id+1);
+    // props.changeRating(props.film.title,id+1)
+    // props.changeFav(props.film.title)
+    setStars((stars)=>{
+        // let stararr= [];
+        return stars.map((s,idx)=>{
+            if(idx<=id)
+                return <Button key={idx+'f'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStarFill/></Button>
+            else
+                return <Button key={idx+'b'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStar/></Button> 
+        })
+      
+        // return stararr;
+    })
+
+  }
+  
+  return stars;
 }
 
 
