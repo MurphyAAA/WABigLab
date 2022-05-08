@@ -54,6 +54,19 @@ function App() {
     // alert(filmTitle,"changeFav");
 
   }
+  const changeRating=(filmTitle,newRating)=>{
+    //fms是原来的state
+    console.log(filmTitle,newRating)
+    let tempFilm = [...films];
+    tempFilm.forEach((x)=>{
+      if(x.title === filmTitle){
+        x.rating = newRating;
+      }
+    });
+    setFilms(tempFilm);
+    // alert(filmTitle,"changeFav");
+
+  }
   
   // const filterFunc =(myfilter)=>{
   //   //console.log(myfilter);
@@ -112,12 +125,12 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<Layout ></Layout>}>
-          <Route index element={<FilmRoute films={filterFilms(id_filter.All)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.All}></FilmRoute>} ></Route>
-          <Route path='all' element={<FilmRoute films={filterFilms(id_filter.All)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.All} ></FilmRoute>} ></Route>
-          <Route path='Favorites' element={<FilmRoute films={filterFilms(id_filter.Favorites)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.Favorites} ></FilmRoute>}></Route>
-          <Route path='BestRated' element={<FilmRoute films={filterFilms(id_filter.BestRate)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.BestRate} ></FilmRoute>}></Route>
-          <Route path='SeenLastMonth' element={<FilmRoute films={filterFilms(id_filter.SeenLastMonth)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.SeenLastMonth} ></FilmRoute>}></Route>
-          <Route path='Unseen' element={<FilmRoute films={filterFilms(id_filter.Unseen)} deleteFilm={deleteFilm} changeFav ={changeFav} filterStatus ={id_filter.Unseen} ></FilmRoute>}></Route>
+          <Route index element={<FilmRoute films={filterFilms(id_filter.All)} deleteFilm={deleteFilm} changeFav ={changeFav} changeRating={changeRating} filterStatus ={id_filter.All}></FilmRoute>} ></Route>
+          <Route path='all' element={<FilmRoute films={filterFilms(id_filter.All)} deleteFilm={deleteFilm} changeFav ={changeFav} changeRating={changeRating} filterStatus ={id_filter.All} ></FilmRoute>} ></Route>
+          <Route path='Favorites' element={<FilmRoute films={filterFilms(id_filter.Favorites)} deleteFilm={deleteFilm} changeFav ={changeFav} changeRating={changeRating} filterStatus ={id_filter.Favorites} ></FilmRoute>}></Route>
+          <Route path='BestRated' element={<FilmRoute films={filterFilms(id_filter.BestRate)} deleteFilm={deleteFilm} changeFav ={changeFav} changeRating={changeRating} filterStatus ={id_filter.BestRate} ></FilmRoute>}></Route>
+          <Route path='SeenLastMonth' element={<FilmRoute films={filterFilms(id_filter.SeenLastMonth)} deleteFilm={deleteFilm} changeFav ={changeFav} changeRating={changeRating} filterStatus ={id_filter.SeenLastMonth} ></FilmRoute>}></Route>
+          <Route path='Unseen' element={<FilmRoute films={filterFilms(id_filter.Unseen)} deleteFilm={deleteFilm} changeFav ={changeFav} changeRating={changeRating} filterStatus ={id_filter.Unseen} ></FilmRoute>}></Route>
         </Route>
         <Route path='/add' element={ <FormRoute films={films} addFilm={addFilm} /> }></Route>
         <Route path='/edit' element={<EditRoute films={films} editFilm={updateFilm} addFilm={addFilm}/>} ></Route>

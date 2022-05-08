@@ -116,7 +116,7 @@ function FilmForm(props){
 
                 <Form.Group as={Col}>
                     <Form.Label >Rating</Form.Label>
-                    {stars}
+                    {stars} &nbsp;
                     <Button onClick={()=>clearRating()}>Clear</Button>
                 </Form.Group>
                 <Form.Group className='mb-3' as={Col}>

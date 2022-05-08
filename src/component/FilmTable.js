@@ -14,7 +14,7 @@ function FilmLists(props){
     return(
         <Col sm={8} >
           <h1 className='txt-left'>Filter:{name_filter[props.filterStatus-1]}</h1>
-          <FilmTable films={props.films} changeFav={props.changeFav} deleteFilm={props.deleteFilm} editFilm={props.editFilm} filterStatus={props.filterStatus} ></FilmTable>
+          <FilmTable films={props.films} changeFav={props.changeFav} changeRating={props.changeRating} deleteFilm={props.deleteFilm} editFilm={props.editFilm} filterStatus={props.filterStatus} ></FilmTable>
         </Col>
     );
 }
@@ -36,7 +36,7 @@ function FilmTable(props) {
               {/* films = {xxxx} 前面的films是属性下一个调用的props科通过 '.films'获得，props.films返回的是{xxx}的值 */}            
             {              
               props.films.map((f) => 
-              <FilmRow film={f} key={f.title} changeFav ={props.changeFav} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />)
+              <FilmRow film={f} key={f.title} changeFav ={props.changeFav} changeRating={props.changeRating} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />)
               // <FilmRow film={f} key={f.title} changeFav ={props.changeFav} deleteFilm={props.deleteFilm} setShowForm={setShowForm} setEditableFilm={setEditableFilm} editableFilm={editableFilm}/>)
               //在这里filter！
             }
@@ -53,7 +53,7 @@ function FilmRow(props){
     return(
         <tr>
           <FilmActions film={props.film} deleteFilm={props.deleteFilm} filterStatus={props.filterStatus} />
-          <FilmData key={props.film.title} film={props.film} changeFav={props.changeFav} />
+          <FilmData key={props.film.title} film={props.film} changeFav={props.changeFav} changeRating={props.changeRating} />
           {/* key不同则会重新生成这个component，否则state不会更新 */}
         </tr>
     );
@@ -64,19 +64,55 @@ function FilmData(props){
   const [mychecked,setChecked] = useState(props.film.favorite);//只会初始化1次，第二次不会重新初始化了，所以会导致mychecked值和props.film.favorite不同
   // console.log('2',props.film.favorite) //为啥这一行和下一行值不一样？？？？？？？？？？？？？？
   // console.log('3',mychecked);
-  
-  const stars= [];
-  for(let i=0;i<props.film.rating;++i){
-    stars.push(<BsStarFill key={i+'f'}/>);
+
+  const [stars,setStars] = useState(()=>{
+    let stararr= [];
+    // if(location.state !==null){
+        if( props.film===undefined || props.film.rating ===undefined){
+            for(let i=0;i<5;++i){
+                stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
+            }
+        }else{
+            for(let i=0;i<props.film.rating;++i){
+                stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
+            }
+            for(let i=props.film.rating;i<5;++i){
+                stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
+            }
+        }
+    // }
+    return stararr;
+  });
+  const clickHandler=(id)=>{
+    // setRating(id+1);
+    const newRating = id+1
+    // console.log("clickHandler:",props.film.title,newRating)
+    props.changeRating(props.film.title,newRating);
+    setStars((stars)=>{
+        // let stararr= [];
+        return stars.map((s,idx)=>{
+            if(idx<=id)
+                return <Button key={idx+'f'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStarFill/></Button>
+            else
+                return <Button key={idx+'b'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStar/></Button> 
+        })
+      
+        // return stararr;
+    })
+
   }
-  for(let i=0;i<5-props.film.rating;++i){
-    stars.push(<BsStar key={i+'b'}/>);
-  }
-  if(props.film.rating ===undefined){
-    for(let i=0;i<5;++i){
-      stars.push(<BsStar key={i}/>);
-    }
-  }
+  // const stars= [];
+  // for(let i=0;i<props.film.rating;++i){
+  //   stars.push(<BsStarFill key={i+'f'}/>);
+  // }
+  // for(let i=0;i<5-props.film.rating;++i){
+  //   stars.push(<BsStar key={i+'b'}/>);
+  // }
+  // if(props.film.rating ===undefined){
+  //   for(let i=0;i<5;++i){
+  //     stars.push(<BsStar key={i}/>);
+  //   }
+  // }
   const handleChange=(title)=>{
     setChecked(!mychecked);
     props.changeFav(title)

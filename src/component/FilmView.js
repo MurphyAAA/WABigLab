@@ -32,7 +32,7 @@ function FilmRoute(props){
     
     // props.filterFunc(props.filterStatus)
     return(
-        <FilmLists films={props.films} deleteFilm={props.deleteFilm}  editFilm={props.editFilm} changeFav ={props.changeFav} filterStatus ={props.filterStatus}></FilmLists>
+        <FilmLists films={props.films} deleteFilm={props.deleteFilm}  editFilm={props.editFilm} changeFav ={props.changeFav} changeRating={props.changeRating} filterStatus ={props.filterStatus}></FilmLists>
     )
 }
 function Layout(props){
