@@ -49,20 +49,8 @@ function App() {
   }
   
   const changeRating=(filmTitle,newRating)=>{
-    //fms是原来的state
-    // console.log(films);
-    // console.log(f);
-    // let tempFilm = [...films];// 为啥films是被删除之前的？？？？？？？？？？？？？？？？？？？
-    // printlength()
-    // setFilms(oldFilms=>{
-    //   return oldFilms.forEach((x)=>{
-    //     if(x.title === filmTitle)
-    //       x.rating = newRating;
-        // return x;
-      // })
-    //   console.log(oldFilms)
-      // return oldFilms;
-    // })
+    
+    // console.log(films)
     let tempFilm = [...films];
     tempFilm.forEach((x)=>{
       if(x.title === filmTitle){

@@ -61,14 +61,10 @@ function FilmRow(props){
 }
 function FilmData(props){
   // 声明一个叫 "mychecked" 的 state 变量
-  // console.log("1",props.film)
   const [rating,setRating] = useState(props.film.rating?props.film.rating:0)
   const [mychecked,setChecked] = useState(props.film.favorite);//只会初始化1次，第二次不会重新初始化了，所以会导致mychecked值和props.film.favorite不同
-  // console.log('2',props.film.favorite) //为啥这一行和下一行值不一样？？？？？？？？？？？？？？
-  // console.log('3',mychecked);
 
-  
-  
+
   // const stars= [];
   // for(let i=0;i<props.film.rating;++i){
   //   stars.push(<BsStarFill key={i+'f'}/>);
@@ -99,12 +95,7 @@ function FilmData(props){
       }
       
       <td>
-        <Checkbox 
-          filmtitle={props.film.title}
-          label='favorite'
-          value={mychecked}
-          onChange={handleChange}
-        />
+        <Checkbox filmtitle={props.film.title}  label='favorite' value={mychecked} onChange={handleChange}  />
       </td>
       
       <td>{props.film.date !==undefined && 
@@ -136,56 +127,34 @@ function Checkbox({filmtitle,label,value,onChange}){
   );
 }
 function ShowStars(props){
+  // console.log(1)
   
-  const [stars,setStars] = useState(()=>{
-    let stararr= [];
-    // if(location.state !==null){
-        if(props.film.rating ===undefined){
-            for(let i=0;i<5;++i){
-                stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
-            }
-        }else{
-            for(let i=0;i<props.film.rating;++i){
-                stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
-            }
-            for(let i=props.film.rating;i<5;++i){
-                stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
-            }
-        }
-    // }
-    return stararr;
-  });
+  let stararr= [];
+  if(props.film.rating ===undefined){
+      for(let i=0;i<5;++i){
+          stararr.push(<Button key={i} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar /></Button>);
+      }
+  }else{
+      for(let i=0;i<props.film.rating;++i){
+          stararr.push(<Button key={i+'f'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStarFill/></Button>);
+      }
+      for(let i=props.film.rating;i<5;++i){
+          stararr.push(<Button key={i+'b'} id={i} variant="light" onClick={()=>{clickHandler(i)}}><BsStar/></Button>);
+      }
+  }
+  // const [stars,setStars] = useState(stararr);
   const clickHandler=(id)=>{
-    // console.log(1);
-    // setRating(id+1);
-    // let newRating = id+1
-    // console.log("clickHandler:",props.film.title,newRating)
-    props.setFilms(oldfilms=>{
-      let films = [...oldfilms]
-      films.forEach(element => {
-      if(element.title === props.film.title)
-          element.rating = (id+1)
-      });
-      return films
-    })
-    // props.changeRating(props.film.title,id+1);
-    // props.changeRating(props.film.title,id+1)
-    // props.changeFav(props.film.title)
-    setStars((stars)=>{
-        // let stararr= [];
-        return stars.map((s,idx)=>{
-            if(idx<=id)
-                return <Button key={idx+'f'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStarFill/></Button>
-            else
-                return <Button key={idx+'b'} id={idx} variant="light" onClick={()=>{clickHandler(idx)}}><BsStar/></Button> 
-        })
-      
-        // return stararr;
-    })
-
+    
+    //改原表平分-->props.film.rating被修改了，这个ShowStars会重新渲染所以正确显示星星
+    props.changeRating(props.film.title,id+1);
+    
+    
+    
   }
   
-  return stars;
+  return stararr;
+  
+
 }
 
 
