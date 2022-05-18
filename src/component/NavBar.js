@@ -12,39 +12,6 @@ const id_filter={
 }
 
 function MyNavBar(props){
-  //let [mychecked,setChecked]=React.useState(false);
-  
-  // const clickHandler = (filter)=>{
-  //   // alert(filter);
-  //   switch (filter){
-  //     case id_filter.All:
-  //       // console.log("All");
-  //       props.filterFunction(id_filter.All);
-  //       break;
-  //     case id_filter.Favorites:
-  //       // console.log("Favorites");
-  //       props.filterFunction(id_filter.Favorites);
-  //       break;
-  //     case id_filter.BestRate:
-  //       // console.log("BestRate");
-  //       props.filterFunction(id_filter.BestRate);
-  //       break;
-  //     case id_filter.SeenLastMonth:
-  //       // console.log("SeenLastMonth");
-  //       props.filterFunction(id_filter.SeenLastMonth);
-  //       break;
-  //     case id_filter.Unseen:
-  //       // console.log("LastSeen");
-  //       props.filterFunction(id_filter.Unseen);
-  //       break; 
-  //     default:
-  //       break;
-  //   }
-    
-  //   //setChecked(!mychecked);
-  // }
-  
-  
   
     return(
     <Col sm={4}>  {/*offset 指定列向右的偏移量，span指定列宽 */}

@@ -19,16 +19,13 @@ const fakeFilms=[
 // }
 
 function App() {
-  // console.log("123")
   const [films,setFilms] = useState(fakeFilms);
   // const [filterStatus,setFilterStatus] = useState(id_filter.All);
   const deleteFilm = (filmTitle)=>{
     setFilms((fms)=>fms.filter(fm=>fm.title !== filmTitle));
-    console.log("delete :",films);
   }
   const addFilm = (film)=>{
     setFilms(oldFilms=>[...oldFilms,film]);
-    console.log("add :",films);
   }
   const updateFilm=(film)=>{//修改
     
@@ -42,15 +39,10 @@ function App() {
         return fm;
       })
     });
-    // console.log(films);
-  }
-  const printlength =()=>{
-    console.log(films);
   }
   
   const changeRating=(filmTitle,newRating)=>{
     
-    // console.log(films)
     let tempFilm = [...films];
     tempFilm.forEach((x)=>{
       if(x.title === filmTitle){
@@ -63,8 +55,6 @@ function App() {
   const changeFav=(filmTitle)=>{
     //fms是原来的state
     let tempFilm = [...films];
-    // console.log("changeFav: ",films.length)
-    // printlength()
     tempFilm.forEach((x)=>{
       if(x.title === filmTitle){
         x.favorite = !x.favorite;
@@ -84,7 +74,6 @@ function App() {
 
 //为什么被调用了两次？？？？  react的问题
   const filterFilms=(filter)=>{ 
-    // console.log("filter");
     // setFilterStatus(filter);
     let myfilms = [];
     // alert(1);

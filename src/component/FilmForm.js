@@ -20,6 +20,7 @@ function FilmForm(props){
                 return dayjs(location.state.filmDate).format('YYYY-MM-DD')
             }
         }
+        return ""
         // props.film.date!==undefined? props.film.date.format('YYYY-MM-DD'):undefined
     });
     const [rating,setRating] = useState(()=>{

@@ -127,7 +127,6 @@ function Checkbox({filmtitle,label,value,onChange}){
   );
 }
 function ShowStars(props){
-  // console.log(1)
   
   let stararr= [];
   if(props.film.rating ===undefined){
