@@ -149,7 +149,6 @@ function ShowStars(props){
     props.changeRating(props.film.title,id+1);
     
     
-    
   }
   
   return stararr;
